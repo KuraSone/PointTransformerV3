@@ -1,0 +1,293 @@
+[project]
+name = "PointTransformerV3"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.9, <3.15"
+dependencies = [
+    "addict>=2.4.0",
+    "h5py>=3.14.0",
+    "huggingface_hub>=1.8.0",
+    "matplotlib>=3.9.4",
+    "modelscope>=1.37.1",
+    "ninja>=1.13.2",
+    "open3d>=0.19.0", # 暂未考虑cuda加速
+    "scikit-learn>=1.6.1",
+    "tensorboard>=2.21.0",
+    "tensorboardx>=2.6.5",
+    "timm>=1.0.30",
+    "torchdiffeq>=0.2.5",
+    "trimesh>=4.12.2",
+]
+
+[dependency-groups]
+dev = [
+    #    "h5py-stubs; python_version >= '3.10'", # 个人维护，已落后
+    "mypy>=1.19.1",
+    "pip>=26.0.1",
+    "ruff>=0.17.2",
+    "scikit-learn-stubs>=0.0.3",
+    "scipy-stubs>=1.15.3.0; python_version >= '3.10'",
+    "ty>=0.0.91",
+    "types-tqdm>=4.67.3.20260205",
+]
+cpu = [
+    "kaolin>=0.18.0",
+    "pyg-lib>=0.2.0",
+    "pytorch3d==0.7.9+d9839a9pt2.8.0cpu",
+    "torch==2.8.0",
+    "torch-geometric==2.7.*",
+    "torch-scatter==2.1.2",
+    "torchvision==0.23.0",
+    "triton-windows==3.4.*; sys_platform == 'win32'",
+]
+cpu-latest = [
+    "pytorch3d>=0.7.9",
+    "torch==2.12.1",
+    "torch-geometric==2.8.1",
+    "torchvision==0.27.1",
+]
+cu102 = [
+    "numpy<2",
+    "setuptools<81",
+    "torch==1.10.2+cu102",
+    "torch-geometric==2.3.*",
+    "torchvision==0.11.3+cu102",
+]
+cu102-linux = [
+    "numpy<2",
+    "pyg-lib>=0.2.0; sys_platform == 'linux'",
+    "setuptools<81",
+    "torch==1.12.1+cu102; sys_platform == 'linux'",
+    "torch-geometric==2.5.*",
+    "torchvision==0.13.1+cu102; sys_platform == 'linux'",
+]
+cu118 = [
+    "flash-attn==2.8.3+pt2.7.0cu118",
+    "kaolin>=0.18.0",
+    "pyg-lib>=0.2.0",
+    "pytorch3d==0.7.9+d9839a9pt2.7.1cu118",
+    "torch==2.7.1",
+    "torch-geometric==2.7.*",
+    "torchvision==0.22.1",
+    "triton-windows==3.3.*; sys_platform == 'win32'",
+]
+cu126 = [
+    "flash-attn==2.8.3+pt2.8.0cu126",
+    "kaolin>=0.18.0",
+    "pyg-lib>=0.2.0",
+    "pytorch3d==0.7.9+d9839a9pt2.8.0cu126",
+    "torch==2.8.0",
+    "torch-geometric==2.7.*",
+    "torchvision==0.23.0",
+    "triton-windows==3.4.*; sys_platform == 'win32'",
+]
+cu128 = [
+    "flash-attn==2.8.3+pt2.8.0cu128; sys_platform == 'linux'",
+    "kaolin>=0.18.0",
+    "pyg-lib>=0.2.0; sys_platform == 'linux'",
+    "pytorch3d==0.7.9+d9839a9pt2.8.0cu128",
+    "torch==2.8.0",
+    "torch-geometric==2.7.*",
+    "torchvision==0.23.0",
+    "triton-windows==3.4.*; sys_platform == 'win32'",
+]
+
+[tool.uv]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32'",
+]
+package = false
+conflicts = [
+    [
+        { group = "cpu" },
+        { group = "cpu-latest" },
+        { group = "cu102" },
+        { group = "cu102-linux" },
+        { group = "cu118" },
+        { group = "cu126" },
+        { group = "cu128" },
+    ],
+]
+
+[tool.uv.dependency-groups]
+cpu = { requires-python = "==3.12.*" }
+cpu-latest = { requires-python = "==3.14.*" }
+cu102 = { requires-python = "==3.9.*" }
+cu102-linux = { requires-python = "==3.10.*" }
+cu118 = { requires-python = "==3.12.*" }
+cu126 = { requires-python = "==3.12.*" }
+cu128 = { requires-python = "==3.12.*" }
+
+[tool.uv.sources]
+kaolin = [
+    { index = "kaolin-cpu", group = "cpu" },
+    { index = "kaolin-cu118", group = "cu118" },
+    { index = "kaolin-cu126", group = "cu126" },
+    { index = "kaolin-cu128", group = "cu128" },
+]
+pyg-lib = [
+    { index = "pyg-cpu", group = "cpu" },
+    { index = "pyg-cu102-torch1.12", group = "cu102-linux" },
+    { index = "pyg-cu118", group = "cu118" },
+    { index = "pyg-cu126", group = "cu126" },
+    { index = "pyg-cu128", group = "cu128" },
+]
+torch = [
+    { index = "pytorch-cpu", group = "cpu" },
+    { index = "pytorch-cpu", group = "cpu-latest" },
+    { index = "pytorch-cu102", group = "cu102" },
+    { index = "pytorch-cu102", group = "cu102-linux" },
+    { index = "pytorch-cu118", group = "cu118" },
+    { index = "pytorch-cu126", group = "cu126" },
+    { index = "pytorch-cu128", group = "cu128" },
+]
+torch-scatter = [
+    { index = "pyg-cpu", group = "cpu" },
+]
+torchvision = [
+    { index = "pytorch-cpu", group = "cpu" },
+    { index = "pytorch-cpu", group = "cpu-latest" },
+    { index = "pytorch-cu102", group = "cu102" },
+    { index = "pytorch-cu102", group = "cu102-linux" },
+    { index = "pytorch-cu118", group = "cu118" },
+    { index = "pytorch-cu126", group = "cu126" },
+    { index = "pytorch-cu128", group = "cu128" },
+]
+
+[[tool.uv.index]]
+name = "kaolin-cpu"
+url = "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.8.0_cpu.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "kaolin-cu118"
+url = "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.7.1_cu118.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "kaolin-cu126"
+url = "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.8.0_cu126.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "kaolin-cu128"
+url = "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.8.0_cu128.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "local"
+url = "./wheels"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "miropsota"
+url = "https://miropsota.github.io/torch_packages_builder"
+
+[[tool.uv.index]]
+name = "pyg-cpu"
+url = "https://data.pyg.org/whl/torch-2.8.0+cpu.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pyg-cu102-torch1.10"
+url = "https://data.pyg.org/whl/torch-1.10.2+cu102.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pyg-cu102-torch1.12"
+url = "https://data.pyg.org/whl/torch-1.12.1+cu102.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pyg-cu118"
+url = "https://data.pyg.org/whl/torch-2.7.1+cu118.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pyg-cu126"
+url = "https://data.pyg.org/whl/torch-2.8.0+cu126.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pyg-cu128"
+url = "https://data.pyg.org/whl/torch-2.8.0+cu128.html"
+explicit = true
+format = "flat"
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu102"
+url = "https://download.pytorch.org/whl/cu102"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "ARG001", # 函数中未使用的参数
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "E", # pycodestyle 错误
+    "F", # pyflakes
+    "I", # isort 导入排序
+    #    "T201", # 不允许使用 print 语句
+    "UP", # pyupgrade
+    "W", # pycodestyle 警告
+]
+ignore = [
+    #    "B008",  # 不要在函数参数默认值中调用函数
+    #    "B904",  # 对 HTTPException 允许不使用 from e 抛出异常
+    #    "E501",  # 行过长
+    #    "W191",  # 缩进包含制表符
+]
+
+[tool.mypy]
+exclude = [".venv"]
+strict = true
+
+[[tool.mypy.overrides]]
+module = [
+    "flash_attn",
+    "h5py",
+    "modelscope.*",
+    "tensorboardX",
+]
+ignore_missing_imports = true
+
+#[tool.ty.terminal]
+#error-on-warning = true
+
+#[build-system]
+#requires = ["hatchling"]
+#build-backend = "hatchling.build"
