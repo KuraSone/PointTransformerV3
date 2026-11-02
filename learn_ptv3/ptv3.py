@@ -113,7 +113,7 @@ class SparseConv(nn.Module):
         # 每个输出通道一个偏置；bias=False 时不创建偏置参数。
         self.bias = nn.Parameter(torch.empty(cout)) if bias else None
         # 均匀初始化上界，1/sqrt(扇入)。
-        bound = 1 / math.sqrt(cin * kernel**3)
+        bound = 1 / math.sqrt(cin * kernel ** 3)
         nn.init.uniform_(self.weight, -bound, bound)  # 用均匀分布填入初始权重。
         if self.bias is not None:
             nn.init.uniform_(self.bias, -bound, bound)  # 启用偏置时使用相同初始化范围。
@@ -459,7 +459,7 @@ def main() -> None:
     # 模拟点云的点数。
     n = 88
     # randperm 随机排列 0~32³-1，再取前 n 个，保证采样的体素互不重复。
-    flat = torch.randperm(32**3, device=device)[:n]
+    flat = torch.randperm(32 ** 3, device=device)[:n]
     # 展开下标满足 i=x*1024+y*32+z，用整除和取余分别还原三个坐标。
     # stack(dim=1) 把三个 (88,) 张量作为三列组成 (88,3)，最后转为 int32。
     grid = torch.stack((flat // 1024, flat // 32 % 32, flat % 32), dim=1).to(
