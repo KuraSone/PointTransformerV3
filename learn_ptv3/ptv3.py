@@ -201,8 +201,6 @@ class Block(nn.Module):
             mixed = mixed.transpose(0, 1).reshape(length, c)
             # 去掉借来的行，保留本组真实点。
             outputs.append(mixed[:real_length])
-            if number == 0:
-                print(f"    Q/K/V {tuple(q.shape)}；权重({h},{length},{length})")
         # 各组拼回(N,C)。
         mixed = torch.cat(outputs, dim=0)
         # (N,C)，恢复输入点的行顺序。
@@ -215,7 +213,6 @@ class Block(nn.Module):
         hidden = F.gelu(self.fc1(self.norm2(x)))
         # 第三条残差，(N,C)。
         x = x + self.fc2(hidden)
-        print(f"    MLP：({n},{c}) -> {tuple(hidden.shape)} -> {tuple(x.shape)}")
         return x
 
 
@@ -345,13 +342,9 @@ class PTv3(nn.Module):
                     codes[permutation],
                     [names[i] for i in permutation.tolist()],
                 )
-                print(
-                    f"下采样stage{stage}：{tuple(projected.shape)} -> {tuple(x.shape)}"
-                )
             for number, block in enumerate(blocks):
                 # 各阶段从0开始轮换路线。
                 route = number % len(names)
-                print(f"编码stage{stage}/block{number}，路线={names[route]}")
                 x = block(x, grid, codes[route].argsort())
 
         # 解码器：恢复父级点数，先将两条支路投影到相同通道，再相加。
@@ -368,10 +361,8 @@ class PTv3(nn.Module):
             x = skip + low[parent["inverse"]]
             coord, grid = parent["coord"], parent["grid"]
             codes, names, depth = parent["codes"], parent["names"], parent["depth"]
-            print(f"上采样到解码stage{stage}：{tuple(low.shape)} -> {tuple(x.shape)}")
             for number, block in enumerate(self.dec_stages[stage]):
                 route = number % len(names)
-                print(f"解码stage{stage}/block{number}，路线={names[route]}")
                 x = block(x, grid, codes[route].argsort())
 
         # feat(N0,64)，恢复原点数、原点顺序和坐标；这是主干特征，尚未接预测头。
